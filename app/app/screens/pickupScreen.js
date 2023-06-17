@@ -79,8 +79,13 @@ const PickupScreen = () => {
                 { cancelable: false }
               );
         }
+        // console.log("selectedDate",selectedDate.split('T'))
         if(selectedDate && selectedTime && delivery){
-            // navigation.navigate("");
+            navigation.replace('cartScreen',{
+                pickUpDate:selectedDate,
+                no_Of_days:delivery,
+                selectedTime:selectedTime
+            });
         }
     }
 
