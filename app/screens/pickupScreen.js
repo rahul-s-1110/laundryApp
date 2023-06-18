@@ -150,7 +150,6 @@ const PickupScreen = () => {
                         <Text style={{fontSize:17,fontWeight:"600",color:"white"}}>Proceed to Cart</Text>
                     </Pressable>
                 </Pressable>
-
             )}
 
         </>

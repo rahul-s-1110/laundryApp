@@ -1,13 +1,56 @@
-import {KeyboardAvoidingView,Pressable,SafeAreaView,StyleSheet,Text,TextInput,View} from "react-native";
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Pressable,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import React, { useState } from "react";
 import { MaterialCommunityIcons, Ionicons, Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth,db } from "../../firebase";
+import { doc, setDoc } from "firebase/firestore";
 
 const RegisterScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const navigation = useNavigation();
+
+  const registerUser = () => {
+    console.log("Click");
+    if (email === "" || password === "" || phone === "") {
+      Alert.alert(
+        "Invalid Details",
+        "Please fill all the Detail",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          { text: "OK", onPress: () => console.log("OK Pressed") },
+        ],
+        { cancelable: false }
+      )
+    }
+
+    createUserWithEmailAndPassword(auth,email,password).then((userCredential) => {
+      console.log("user credential",userCredential);
+      const user = userCredential._tokenResponse.email;
+      const myUserUid = auth.currentUser.uid;
+
+      setDoc(doc(db,"users",`${myUserUid}`),{
+        email:user,
+        phone:phone
+      })
+    })
+
+  };
 
   return (
     <SafeAreaView style={styles.androidSafeArea}>
@@ -54,7 +97,7 @@ const RegisterScreen = () => {
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Ionicons name="key-outline" size={24} color="black" />
             <TextInput
-              placeholder="Email"
+              placeholder="Password"
               value={password}
               onChangeText={setPassword}
               secureTextEntry={true}
@@ -73,7 +116,7 @@ const RegisterScreen = () => {
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Feather name="phone" size={24} color="black" />
             <TextInput
-              placeholder="Email"
+              placeholder="Phone"
               value={phone}
               onChangeText={setPhone}
               placeholderTextColor="black"
@@ -90,6 +133,7 @@ const RegisterScreen = () => {
           </View>
 
           <Pressable
+            onPress={registerUser}
             style={{
               backgroundColor: "#318CE7",
               padding: 15,
@@ -104,6 +148,7 @@ const RegisterScreen = () => {
               Register
             </Text>
           </Pressable>
+
           <Pressable
             style={{ marginTop: 20 }}
             onPress={() => navigation.goBack()}

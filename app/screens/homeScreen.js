@@ -155,7 +155,7 @@ const HomeScreen = () => {
     return (
         <>
             <ScrollView style={styles.androidSafeArea}>
-                <View style={{ flexDirection: "row", alignItems: "center", padding: 10 }}>
+                <View style={styles.topbar}>
                     <MaterialIcons name="location-on" size={30} color="#fd5c63" />
                     <View>
                         <Text style={{ fontSize: 18, fontWeight: "600" }}>Home</Text>
@@ -165,7 +165,7 @@ const HomeScreen = () => {
                         <Image style={{ width: 40, height: 40, borderRadius: 20 }} source={{ uri: "https://cdn-icons-png.flaticon.com/128/293/293241.png" }} />
                     </Pressable>
                 </View>
-                <View style={{ margin: 10, flexDirection: "row", padding: 10, alignItems: "center", justifyContent: "space-between", borderWidth: 0.8, borderColor: "#C0C0C0", borderRadius: 7 }}>
+                <View style={styles.searchBarView}>
                     <TextInput placeholder='Search for Item or More' />
                     <Feather name="search" size={24} color="#fd5c63" />
                 </View>
@@ -188,7 +188,6 @@ const HomeScreen = () => {
                 </Pressable>
 
             )}
-
         </>
     )
 }
@@ -198,6 +197,12 @@ const styles = StyleSheet.create({
         paddingTop: Platform.OS === 'android' ? 28 : 0,
         backgroundColor: "#f0f0f0"
     },
+    topbar:{
+        flexDirection: "row", alignItems: "center", padding: 10
+    },
+    searchBarView:{
+        margin: 10, flexDirection: "row", padding: 10, alignItems: "center", justifyContent: "space-between", borderWidth: 0.8, borderColor: "#C0C0C0", borderRadius: 7
+    }
 })
 
 export default HomeScreen
