@@ -1,11 +1,13 @@
 import { StyleSheet, Text, View, SafeAreaView, Platform, ScrollView } from 'react-native'
-import React from 'react'
+import React, { useId } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Pressable } from 'react-native';
-import { decrementQuantity, incrementQuantity } from '../redux/cartReducer';
+import { cleanCart, decrementQuantity, incrementQuantity } from '../redux/cartReducer';
 import { decrementQty, incremetQty } from '../redux/productReducer';
+import { auth, db } from '../../firebase';
+import { doc, setDoc } from 'firebase/firestore';
 
 
 const CartScreen = () => {
@@ -14,8 +16,22 @@ const CartScreen = () => {
     const navigation = useNavigation();
     const dispatch = useDispatch();
     const route = useRoute();
-    console.log("hdkf",route)
+    const userID = auth.currentUser.uid;
 
+
+    const placeOrder = async() =>{
+      navigation.navigate("orderScreen")
+      dispatch(cleanCart());
+      await setDoc(doc(db,"users",`${userID}`),{
+        orders:{...cart},
+        picupDetails:route.params
+      },
+      {
+        merge:true
+      }
+      );
+      console.log("placeOrder fun")
+    };
 
     return (
         <>
@@ -295,7 +311,7 @@ const CartScreen = () => {
                         <Text style={{fontSize:15,fontWeight:"400",color:"white",marginVertical:6}}>extra charges may apply</Text>
                     </View>
 
-                    <Pressable onPress={"proceedToCart"}>
+                    <Pressable  onPress={placeOrder} >
                         <Text style={{fontSize:17,fontWeight:"600",color:"white"}}>Place Order</Text>
                     </Pressable>
                 </Pressable>

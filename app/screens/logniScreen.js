@@ -17,6 +17,7 @@ const LoginScreen = () => {
     useEffect(()=>{
       setLoading(true)
       const unsuscribe = auth.onAuthStateChanged((authUser)=>{
+        console.log("authuser",authUser)
 
         if(!authUser){
           setLoading(false)
@@ -28,6 +29,7 @@ const LoginScreen = () => {
       })
       return unsuscribe;
     },[])
+    
 
     const loginUser = () =>{
       signInWithEmailAndPassword(auth,email,password).then((userCredential)=>{

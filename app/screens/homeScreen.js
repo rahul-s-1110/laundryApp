@@ -2,7 +2,7 @@ import { View, Text, SafeAreaView, Image, StyleSheet, Platform, ScrollView } fro
 import React, { useEffect, useState } from 'react'
 import * as Location from 'expo-location'
 import { Alert } from 'react-native'
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons,FontAwesome5 } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { Pressable } from 'react-native';
 import { TextInput } from 'react-native';
@@ -12,6 +12,8 @@ import DressItem from '../componnet/dressItem';
 import { useDispatch, useSelector } from 'react-redux';
 import { getProduct } from '../redux/productReducer';
 import { useNavigation } from '@react-navigation/native';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../firebase';
 
 
 const HomeScreen = () => {
@@ -19,6 +21,7 @@ const HomeScreen = () => {
     const total = cart.map((item) => item.quantity * item.price).reduce((curr, prev) => curr + prev, 0);
     const [displayCurrentAddress, setDisplayCurrentAddress] = useState("we are loading Loaction")
     const [locationServiceEnable, setLocationServiceEnable] = useState(false);
+    const [items,setItems] = useState([])        
     const navigation = useNavigation();
 
     useEffect(() => {
@@ -66,7 +69,6 @@ const HomeScreen = () => {
         }
 
         const { coords } = await Location.getCurrentPositionAsync();
-        // console.log(coords)
         if (coords) {
             const { latitude, longitude } = coords;
 
@@ -74,8 +76,6 @@ const HomeScreen = () => {
                 latitude,
                 longitude,
             });
-
-            // console.log(response)
 
             for (let item of response) {
                 let address = `${item.name} ${item.city} ${item.postalCode}`;
@@ -90,67 +90,19 @@ const HomeScreen = () => {
     useEffect(() => {
         if (product.length > 0) return;
 
-        const fetchProduct = () => {
-            services.map((service) =>
-                dispatch(getProduct(service))
-            )
+        const fetchProduct = async () => {
+            const colref = collection(db, "types");
+            const docSnap = await getDocs(colref);
+            docSnap.forEach((doc) => {
+                items.push(doc.data());
+            })
+            items.map((service) => dispatch(getProduct(service)))
         }
+
         fetchProduct();
     }, [])
 
-    const services = [
-        {
-            id: "0",
-            image: "https://cdn-icons-png.flaticon.com/128/4643/4643574.png",
-            name: "shirt",
-            quantity: 0,
-            price: 10,
-        },
-        {
-            id: "11",
-            image: "https://cdn-icons-png.flaticon.com/128/892/892458.png",
-            name: "T-shirt",
-            quantity: 0,
-            price: 10,
-        },
-        {
-            id: "12",
-            image: "https://cdn-icons-png.flaticon.com/128/9609/9609161.png",
-            name: "dresses",
-            quantity: 0,
-            price: 10,
-        },
-        {
-            id: "13",
-            image: "https://cdn-icons-png.flaticon.com/128/599/599388.png",
-            name: "jeans",
-            quantity: 0,
-            price: 10,
-        },
-        {
-            id: "14",
-            image: "https://cdn-icons-png.flaticon.com/128/9431/9431166.png",
-            name: "Sweater",
-            quantity: 0,
-            price: 10,
-        },
-        {
-            id: "15",
-            image: "https://cdn-icons-png.flaticon.com/128/3345/3345397.png",
-            name: "shorts",
-            quantity: 0,
-            price: 10,
-        },
-        {
-            id: "16",
-            image: "https://cdn-icons-png.flaticon.com/128/293/293241.png",
-            name: "Sleeveless",
-            quantity: 0,
-            price: 10,
-        },
-    ];
-
-
+    
 
     return (
         <>
@@ -161,8 +113,8 @@ const HomeScreen = () => {
                         <Text style={{ fontSize: 18, fontWeight: "600" }}>Home</Text>
                         <Text>{displayCurrentAddress}</Text>
                     </View>
-                    <Pressable style={{ marginLeft: "auto", marginRight: 8 }}>
-                        <Image style={{ width: 40, height: 40, borderRadius: 20 }} source={{ uri: "https://cdn-icons-png.flaticon.com/128/293/293241.png" }} />
+                    <Pressable onPress={()=>navigation.navigate('profileScreen')} style={{ marginLeft: "auto", marginRight: 8 }}>
+                        <FontAwesome5 name="user-tie" size={24} color="black" />
                     </Pressable>
                 </View>
                 <View style={styles.searchBarView}>
