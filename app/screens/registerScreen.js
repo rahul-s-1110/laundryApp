@@ -12,7 +12,7 @@ import React, { useState } from "react";
 import { MaterialCommunityIcons, Ionicons, Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth,db } from "../../firebase";
+import { auth, db } from "../../firebase";
 import { doc, setDoc } from "firebase/firestore";
 
 const RegisterScreen = () => {
@@ -36,20 +36,21 @@ const RegisterScreen = () => {
           { text: "OK", onPress: () => console.log("OK Pressed") },
         ],
         { cancelable: false }
-      )
+      );
     }
 
-    createUserWithEmailAndPassword(auth,email,password).then((userCredential) => {
-      console.log("user credential",userCredential);
-      const user = userCredential._tokenResponse.email;
-      const myUserUid = auth.currentUser.uid;
+    createUserWithEmailAndPassword(auth, email, password).then(
+      (userCredential) => {
+        console.log("user credential", userCredential);
+        const user = userCredential._tokenResponse.email;
+        const myUserUid = auth.currentUser.uid;
 
-      setDoc(doc(db,"users",`${myUserUid}`),{
-        email:user,
-        phone:phone
-      })
-    })
-
+        setDoc(doc(db, "users", `${myUserUid}`), {
+          email: user,
+          phone: phone,
+        });
+      }
+    );
   };
 
   return (
@@ -62,9 +63,7 @@ const RegisterScreen = () => {
             marginTop: 100,
           }}
         >
-          <Text style={{ fontSize: 20, color: "#662D91", fontWeight: "bold" }}>
-            Register
-          </Text>
+          <Text style={styles.registerTxt}>Register</Text>
           <Text style={{ fontSize: 18, marginTop: 8, fontWeight: "600" }}>
             Create a New Account
           </Text>
@@ -83,14 +82,7 @@ const RegisterScreen = () => {
               onChangeText={setEmail}
               keyboardType="email-address"
               placeholderTextColor="black"
-              style={{
-                borderBottomWidth: 1,
-                marginLeft: 14,
-                borderBottomColor: "gray",
-                width: 280,
-                marginVertical: 10,
-                fontSize: email ? 18 : 18,
-              }}
+              style={[styles.inputBox, { fontSize: email ? 18 : 18 }]}
             />
           </View>
 
@@ -102,14 +94,7 @@ const RegisterScreen = () => {
               onChangeText={setPassword}
               secureTextEntry={true}
               placeholderTextColor="black"
-              style={{
-                borderBottomWidth: 1,
-                marginLeft: 14,
-                borderBottomColor: "gray",
-                width: 280,
-                marginVertical: 20,
-                fontSize: password ? 18 : 18,
-              }}
+              style={[styles.inputBox, { fontSize: password ? 18 : 18 }]}
             />
           </View>
 
@@ -121,46 +106,19 @@ const RegisterScreen = () => {
               onChangeText={setPhone}
               placeholderTextColor="black"
               keyboardType="number-pad"
-              style={{
-                borderBottomWidth: 1,
-                marginLeft: 14,
-                borderBottomColor: "gray",
-                width: 280,
-                marginVertical: 20,
-                fontSize: password ? 18 : 18,
-              }}
+              style={[styles.inputBox, { fontSize: password ? 18 : 18 }]}
             />
           </View>
 
-          <Pressable
-            onPress={registerUser}
-            style={{
-              backgroundColor: "#318CE7",
-              padding: 15,
-              width: 200,
-              marginTop: 50,
-              marginLeft: "auto",
-              marginRight: "auto",
-              borderRadius: 10,
-            }}
-          >
-            <Text style={{ fontSize: 18, textAlign: "center", color: "white" }}>
-              Register
-            </Text>
+          <Pressable onPress={registerUser} style={styles.btn}>
+            <Text style={styles.btnTxt}>Register</Text>
           </Pressable>
 
           <Pressable
             style={{ marginTop: 20 }}
             onPress={() => navigation.goBack()}
           >
-            <Text
-              style={{
-                alignSelf: "center",
-                fontSize: 17,
-                color: "gray",
-                fontWeight: "600",
-              }}
-            >
+            <Text style={styles.backToSignIn}>
               Already have a account ? Sign In
             </Text>
           </Pressable>
@@ -179,5 +137,37 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 10,
     alignItems: "center",
+  },
+  backToSignIn: {
+    alignSelf: "center",
+    fontSize: 17,
+    color: "gray",
+    fontWeight: "600",
+  },
+  btnTxt: {
+    fontSize: 18,
+    textAlign: "center",
+    color: "white",
+  },
+  btn: {
+    backgroundColor: "#318CE7",
+    padding: 15,
+    width: 200,
+    marginTop: 50,
+    marginLeft: "auto",
+    marginRight: "auto",
+    borderRadius: 10,
+  },
+  inputBox: {
+    borderBottomWidth: 1,
+    marginLeft: 14,
+    borderBottomColor: "gray",
+    width: 280,
+    marginVertical: 20,
+  },
+  registerTxt: {
+    fontSize: 20,
+    color: "#662D91",
+    fontWeight: "bold",
   },
 });
